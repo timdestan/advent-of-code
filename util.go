@@ -3,6 +3,7 @@ package main
 // Embed FS to get access to the input file
 import (
 	"embed"
+	"math"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -107,4 +108,50 @@ func transposeGrid[T any](grid [][]T) [][]T {
 		transposed = append(transposed, trow)
 	}
 	return transposed
+}
+
+type DisjointSet struct {
+	Size    int
+	Parents []int
+}
+
+func NewDisjointSet(size int) *DisjointSet {
+	s := &DisjointSet{
+		Size:    size,
+		Parents: make([]int, size),
+	}
+	for i := range size {
+		s.Parents[i] = i
+	}
+	return s
+}
+
+func (s *DisjointSet) Find(x int) int {
+	if s.Parents[x] != x {
+		s.Parents[x] = s.Find(s.Parents[x])
+		return s.Parents[x]
+	} else {
+		return x
+	}
+}
+
+func (s *DisjointSet) Union(x, y int) {
+	// Replace nodes by roots
+	x = s.Find(x)
+	y = s.Find(y)
+	if x == y {
+		return
+	}
+	s.Parents[y] = x
+}
+
+type vec3 struct {
+	x, y, z float64
+}
+
+func euclideanDistance(a, b *vec3) float64 {
+	dx := a.x - b.x
+	dy := a.y - b.y
+	dz := a.z - b.z
+	return math.Sqrt(dx*dx + dy*dy + dz*dz)
 }
