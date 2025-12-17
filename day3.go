@@ -5,17 +5,17 @@ import (
 )
 
 func day3() {
-	parseLine := func(s string) []int64 {
-		var res []int64
+	parseLine := func(s string) []int {
+		var res []int
 		for i := range s {
 			res = append(res, parseInt(s[i:i+1]))
 		}
 		return res
 	}
-	maxJoltage := func(nums []int64) int64 {
+	maxJoltage := func(nums []int) int {
 		i := 0
 		numBatteries := 12
-		var total int64
+		var total int
 		for numBatteries > 0 {
 			// Find the best battery to use. We need to leave space
 			// for the remaining batteries.
@@ -36,10 +36,14 @@ func day3() {
 		return total
 	}
 
-	var total int64
+	var total int
 	for _, line := range readDataLines("day3.txt") {
 		nums := parseLine(line)
 		total += maxJoltage(nums)
 	}
 	fmt.Printf("total: %d\n", total)
+}
+
+func init() {
+	functionRegistry[3] = day3
 }

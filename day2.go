@@ -22,7 +22,7 @@ func day2() {
 		}
 		return false
 	}
-	var sumOfSilly int64
+	var sumOfSilly int
 
 	for _, group := range strings.Split(readDataFile("day2.txt"), ",") {
 		group = strings.TrimSpace(group)
@@ -44,4 +44,8 @@ func day2() {
 	}
 
 	fmt.Printf("Sum of silly: %d\n", sumOfSilly)
+}
+
+func init() {
+	functionRegistry[2] = day2
 }

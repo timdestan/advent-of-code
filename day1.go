@@ -33,3 +33,7 @@ func day1() {
 
 	fmt.Printf("Zero count: %d\n", zeroCount)
 }
+
+func init() {
+	functionRegistry[1] = day1
+}

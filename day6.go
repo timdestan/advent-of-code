@@ -28,16 +28,16 @@ func day6() {
 		problems = append(problems, currentProblem)
 	}
 
-	ops := map[byte]func(int64, int64) int64{
-		'*': func(a, b int64) int64 {
+	ops := map[byte]func(int, int) int{
+		'*': func(a, b int) int {
 			return a * b
 		},
-		'+': func(a, b int64) int64 {
+		'+': func(a, b int) int {
 			return a + b
 		},
 	}
 
-	var total int64
+	var total int
 	for _, p := range problems {
 		// fmt.Printf("\nProblem\n")
 		// for _, row := range p {
@@ -49,8 +49,8 @@ func day6() {
 		op := p[0][ncols-1]
 		assert(ops[op] != nil, "unsupposed op")
 
-		parseRow := func(i int) int64 {
-			var x int64
+		parseRow := func(i int) int {
+			var x int
 			for j := range min(len(p[i]), ncols-1) {
 				if p[i][j] == ' ' {
 					continue
@@ -72,4 +72,8 @@ func day6() {
 	}
 
 	fmt.Printf("Total: %d\n", total)
+}
+
+func init() {
+	functionRegistry[6] = day6
 }

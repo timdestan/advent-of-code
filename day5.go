@@ -8,9 +8,9 @@ import (
 
 func day5() {
 	type dataRange struct {
-		min, max int64
+		min, max int
 	}
-	var numbers []int64
+	var numbers []int
 	var ranges []dataRange
 
 	for _, line := range readDataLines("day5.txt") {
@@ -25,7 +25,7 @@ func day5() {
 	}
 
 	type endpoint struct {
-		index     int64
+		index     int
 		dataRange dataRange
 		isStart   bool
 	}
@@ -46,9 +46,9 @@ func day5() {
 		return int(a.index - b.index)
 	})
 
-	var validNumbers int64
+	var validNumbers int
 
-	var lastIdx int64 = -1
+	lastIdx := -1
 	numOpen := 0
 	for _, ep := range endpoints {
 		// fmt.Printf("ep %v\n", ep)
@@ -65,4 +65,8 @@ func day5() {
 	}
 
 	fmt.Printf("%d possible valid.\n", validNumbers)
+}
+
+func init() {
+	functionRegistry[5] = day5
 }

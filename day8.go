@@ -83,3 +83,7 @@ func day8() {
 
 	// fmt.Printf("Product of first 3 cluster: %d.\n", product)
 }
+
+func init() {
+	functionRegistry[8] = day8
+}

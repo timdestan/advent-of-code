@@ -51,3 +51,7 @@ func day4() {
 	}
 	fmt.Printf("Total: %d\n", total)
 }
+
+func init() {
+	functionRegistry[4] = day4
+}

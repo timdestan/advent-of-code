@@ -69,3 +69,7 @@ func day7() {
 	fmt.Printf("totalTimelines: %d\n", totalTimelines)
 
 }
+
+func init() {
+	functionRegistry[7] = day7
+}
