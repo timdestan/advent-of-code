@@ -38,14 +38,6 @@ func must[T any](v T, err error) T {
 	return v
 }
 
-func copySlice[T any](slice []T) []T {
-	copy := make([]T, len(slice))
-	for i := range slice {
-		copy[i] = slice[i]
-	}
-	return copy
-}
-
 func slicesEqual[T comparable](a, b []T) bool {
 	if len(a) != len(b) {
 		return false
@@ -56,6 +48,14 @@ func slicesEqual[T comparable](a, b []T) bool {
 		}
 	}
 	return true
+}
+
+func sum[T Number](xs [] T) T {
+	var acc T
+	for _, x := range xs {
+		acc += x
+	}
+	return acc
 }
 
 //go:embed data/*.txt

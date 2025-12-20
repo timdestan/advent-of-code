@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"iter"
 	"math"
+	"slices"
 	"strings"
 )
 
@@ -16,14 +16,6 @@ func day10() {
 		targetState   []bool
 		targetJoltage []int
 		instructions  []instruction
-	}
-
-	totalTargetJoltage := func(m machine) int {
-		x := 0
-		for _, j := range m.targetJoltage {
-			x += j
-		}
-		return x
 	}
 
 	var machines []machine
@@ -61,28 +53,10 @@ func day10() {
 		}
 		machines = append(machines, m)
 	}
-
-	var cartProd func(n, size int) iter.Seq[[]int]
-	cartProd = func(n, size int) iter.Seq[[]int] {
-		return func(yield func([]int) bool) {
-			if size == 0 {
-				yield(nil)
-				return
-			}
-			for slice := range cartProd(n, size-1) {
-				for i := range n {
-					if !yield(append(slice, i)) {
-						return
-					}
-				}
-			}
-		}
-	}
-
 	total := 0
 
 	for _, m := range machines {
-		fmt.Printf("machine: %v\ntotalJoltage: %d\n", m, totalTargetJoltage(m))
+		fmt.Printf("machine: %v\ntotalJoltage: %d\n", m, sum(m.targetJoltage))
 
 		type soln struct {
 			state []int
@@ -110,7 +84,7 @@ func day10() {
 		}
 
 		applyInstructionBackwards := func(st []int, inst instruction) ([]int, bool) {
-			newst := copySlice(st)
+			newst := slices.Clone(st)
 			for _, i := range inst.indices {
 				if st[i] == 0 {
 					return nil, false
