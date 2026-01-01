@@ -1,10 +1,16 @@
 package main
 
+// This one requires lp_solve to be installed and available
+// in cgo's include path,
+// see https://pkg.go.dev/github.com/draffensperger/golp#section-readme
+
 import (
 	"fmt"
 	"math"
 	"slices"
 	"strings"
+
+	"github.com/draffensperger/golp"
 )
 
 func day10() {
@@ -56,75 +62,38 @@ func day10() {
 	total := 0
 
 	for _, m := range machines {
-		fmt.Printf("machine: %v\ntotalJoltage: %d\n", m, sum(m.targetJoltage))
+		// fmt.Printf("machine: %v\ntotalJoltage: %d\n", m, sum(m.targetJoltage))
+		numRows := len(m.targetJoltage)
+		numCols := len(m.instructions)
 
-		type soln struct {
-			state []int
-			cost  int
-		}
-
-		isAllZeroes := func(xs []int) bool {
-			for _, x := range xs {
-				if x != 0 {
-					return false
+		lp := golp.NewLP(numRows, numCols)
+		// Set to minimize by default.
+		for i, joltage := range m.targetJoltage {
+			row := make([]float64, numCols)
+			for j, inst := range m.instructions {
+				if slices.Contains(inst.indices, i) {
+					row[j] = 1.0
 				}
 			}
-			return true
+			lp.AddConstraint(row, golp.EQ, float64(joltage))
 		}
-
-		key := func(xs []int) string {
-			var sb strings.Builder
-			for i, x := range xs {
-				if i > 0 {
-					sb.WriteString(",")
-				}
-				sb.WriteString(fmt.Sprintf("%d", x))
+		{
+			objFn := make([]float64, numCols)
+			for j := range objFn {
+				objFn[j] = 1.0
+				lp.SetInt(j, true)
 			}
-			return sb.String()
+			lp.SetObjFn(objFn)
 		}
-
-		applyInstructionBackwards := func(st []int, inst instruction) ([]int, bool) {
-			newst := slices.Clone(st)
-			for _, i := range inst.indices {
-				if st[i] == 0 {
-					return nil, false
-				}
-				newst[i] -= 1
-			}
-			return newst, true
+		// fmt.Printf("LP: %v", lp.WriteToString())
+		assert(lp.Solve() == golp.OPTIMAL, "failed lp_solve")
+		cost := 0
+		for _, v := range lp.Variables() {
+			assert(v == math.Trunc(v), "non-integer solution")
+			cost += int(v)
 		}
-
-		costByState := make(map[string]int)
-
-		var computeCost func(st []int) (int, bool)
-		computeCost = func(st []int) (int, bool) {
-			k := key(st)
-			if v, ok := costByState[k]; ok {
-				return v, true
-			}
-			if isAllZeroes(st) {
-				return 0, true
-			}
-			mincost := math.MaxInt64
-			for _, inst := range m.instructions {
-				newst, ok := applyInstructionBackwards(st, inst)
-				if !ok {
-					continue
-				}
-				cost, ok := computeCost(newst)
-				if ok {
-					mincost = min(mincost, cost+1)
-				}
-			}
-			ok := mincost != math.MaxInt64
-			if ok {
-				costByState[k] = mincost
-			}
-			return mincost, ok
-		}
-		cost, ok := computeCost(m.targetJoltage)
-		assert(ok)
-		fmt.Printf("Cost is %d\n", cost)
+		assert(cost > 0)
+		// fmt.Printf("Cost is %d\n", cost)
 		total += cost
 	}
 

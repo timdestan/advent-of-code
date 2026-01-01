@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"maps"
 	"math"
-	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -50,7 +49,7 @@ func slicesEqual[T comparable](a, b []T) bool {
 	return true
 }
 
-func sum[T Number](xs [] T) T {
+func sum[T Number](xs []T) T {
 	var acc T
 	for _, x := range xs {
 		acc += x
@@ -62,7 +61,7 @@ func sum[T Number](xs [] T) T {
 var dataFS embed.FS
 
 func readDataFile(filename string) string {
-	return string(must(dataFS.ReadFile(filepath.Join("data", filename))))
+	return string(must(dataFS.ReadFile("data/" + filename)))
 }
 
 func readDataLines(filename string) []string {
